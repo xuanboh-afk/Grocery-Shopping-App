@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ichiju Issai">
+<meta name="theme-color" content="#EFF1ED">
+<title>Ichiju Issai — weekly shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17233B;
+  --ink-soft:#5A6478;
+  --ink-faint:#98A0AE;
+  --paper:#EFF1ED;
+  --surface:#FFFFFF;
+  --rule:#DCE0DA;
+  --celadon:#6F9481;
+  --celadon-wash:#E4EDE7;
+  --karashi:#B8841A;
+  --karashi-wash:#F6EBD5;
+  --radius:14px;
+  --mincho:"Zen Old Mincho",Georgia,serif;
+  --gothic:"Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--gothic);
+  font-size:16px;
+  line-height:1.45;
+  padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--karashi);outline-offset:2px;border-radius:4px}
+
+/* ── masthead ── */
+.masthead{
+  position:sticky;top:0;z-index:20;
+  background:var(--paper);
+  border-bottom:1px solid var(--rule);
+  padding:calc(14px + env(safe-area-inset-top)) 18px 0;
+}
+.masthead-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.wordmark{font-family:var(--mincho);font-weight:700;font-size:26px;letter-spacing:.06em;line-height:1}
+.wordmark span{display:block;font-family:var(--gothic);font-weight:500;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
+.weekstamp{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);text-align:right}
+.weekstamp b{display:block;font-family:var(--mincho);font-size:17px;letter-spacing:.02em;text-transform:none;color:var(--ink)}
+
+.modes{display:flex;gap:0;margin-top:14px}
+.mode{
+  flex:1;padding:11px 4px 10px;text-align:center;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);
+  border-bottom:2px solid transparent;transition:color .18s,border-color .18s;
+}
+.mode[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.mode .n{font-weight:500;letter-spacing:.04em}
+
+/* ── categories ── */
+main{padding:18px 14px 0;max-width:600px;margin:0 auto}
+.cat{
+  background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);
+  margin-bottom:12px;overflow:hidden;
+}
+.cat-head{display:flex;align-items:center;gap:12px;padding:13px 14px 12px}
+.glyph{
+  flex:0 0 34px;height:34px;display:grid;place-items:center;
+  font-family:var(--mincho);font-size:19px;font-weight:600;
+  background:var(--celadon-wash);color:var(--celadon);border-radius:9px;
+}
+.glyph.extra{background:transparent;color:var(--ink-faint);border:1px dashed var(--rule);font-size:15px}
+.cat-title{flex:1;min-width:0}
+.cat-title h2{margin:0;font-family:var(--mincho);font-size:17px;font-weight:600;letter-spacing:.01em}
+.cat-title p{margin:2px 0 0;font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em}
+
+/* the quota band — signature element */
+.band{display:flex;gap:3px;align-items:flex-end;flex-wrap:wrap;max-width:104px;justify-content:flex-end}
+.tick{width:9px;height:16px;border-radius:2px}
+.tick.secured{background:var(--ink)}
+.tick.planned{background:var(--karashi)}
+.tick.needed{background:transparent;border:1.5px solid var(--ink-faint)}
+.tick.spare{background:transparent;border:1.5px dashed var(--rule)}
+.tick.over{background:var(--celadon)}
+
+.items{list-style:none;margin:0;padding:0 14px 4px}
+.item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--rule)}
+.state{
+  flex:0 0 auto;min-width:74px;padding:5px 9px;border-radius:999px;font-size:10.5px;
+  font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;
+  border:1px solid transparent;transition:background .15s,color .15s;
+}
+.state.need{background:var(--karashi-wash);color:var(--karashi);border-color:#EBD9B4}
+.state.home{background:var(--celadon-wash);color:var(--celadon);border-color:#CFE0D6}
+.state.got{background:var(--ink);color:var(--paper)}
+.name{flex:1;min-width:0;font-size:15.5px;word-break:break-word}
+.item.done .name{color:var(--ink-faint);text-decoration:line-through;text-decoration-thickness:1px}
+.kill{flex:0 0 auto;padding:6px 8px;color:var(--ink-faint);font-size:17px;line-height:1}
+
+.addrow{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--rule)}
+.addrow input{
+  flex:1;min-width:0;font:inherit;font-size:15.5px;padding:9px 12px;
+  background:var(--paper);border:1px solid var(--rule);border-radius:9px;color:var(--ink);
+}
+.addrow input::placeholder{color:var(--ink-faint)}
+.addrow button{
+  flex:0 0 auto;padding:9px 15px;background:var(--ink);color:var(--paper);
+  border-radius:9px;font-size:13px;font-weight:700;letter-spacing:.06em;
+}
+
+/* ── staples ── */
+.staples{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);margin-bottom:12px}
+.staples-head{padding:14px 14px 10px;border-bottom:1px solid var(--rule)}
+.staples-head h2{margin:0;font-family:var(--mincho);font-size:17px;font-weight:600}
+.staples-head p{margin:3px 0 0;font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em}
+.staple{display:flex;align-items:center;gap:11px;padding:10px 14px;border-top:1px solid var(--rule);width:100%;text-align:left}
+.staple:first-of-type{border-top:none}
+.box{flex:0 0 21px;height:21px;border:1.5px solid var(--ink-faint);border-radius:6px;display:grid;place-items:center;
+  font-size:12px;color:transparent;transition:background .15s,border-color .15s}
+.staple.on .box{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.staple.on .name{color:var(--ink-faint);text-decoration:line-through}
+.staple .tag{font-family:var(--mincho);font-size:14px;color:var(--celadon);flex:0 0 auto}
+
+/* ── shop mode ── */
+.shop-group{margin-bottom:18px}
+.shop-group h3{
+  margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);padding-left:2px;
+}
+.shopitem{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:var(--surface);border:1px solid var(--rule);border-radius:11px;
+  padding:15px 14px;margin-bottom:7px;font-size:17px;
+}
+.shopitem.on{background:transparent;border-style:dashed;color:var(--ink-faint)}
+.shopitem.on .name{text-decoration:line-through}
+
+.empty{text-align:center;padding:46px 24px;color:var(--ink-soft)}
+.empty p{margin:0 0 6px;font-family:var(--mincho);font-size:18px;color:var(--ink)}
+.empty small{font-size:13px;color:var(--ink-faint)}
+
+/* ── footer ── */
+.footbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(239,241,237,.94);backdrop-filter:blur(10px);border-top:1px solid var(--rule);
+}
+.tally{font-size:11.5px;letter-spacing:.08em;color:var(--ink-soft)}
+.tally b{font-family:var(--mincho);font-size:16px;color:var(--ink)}
+.reset{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
+  border:1px solid var(--rule);border-radius:999px;padding:8px 13px}
+.legend{padding:2px 4px 26px;font-size:11px;color:var(--ink-faint);line-height:1.7}
+.legend .k{display:inline-block;width:9px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-row">
+    <div class="wordmark">一汁一菜<span>weekly shop</span></div>
+    <div class="weekstamp">week of<b id="weekstamp">—</b></div>
+  </div>
+  <div class="modes" role="tablist">
+    <button class="mode" role="tab" id="tab-plan" aria-selected="true">Plan</button>
+    <button class="mode" role="tab" id="tab-shop" aria-selected="false">Shop <span class="n" id="shopcount"></span></button>
+  </div>
+</header>
+
+<main id="view"></main>
+
+<div class="footbar">
+  <div class="tally" id="tally">—</div>
+  <button class="reset" id="reset">Start new week</button>
+</div>
+
+<script>
+/* ─────────── framework ─────────── */
+/* まごわやさしい — goma and wakame live in Staples, checked at the end. */
+const FRAMEWORK = [
+  {id:'mame',    kana:'ま', name:'Beans',                hint:'natto, tofu, edamame',            min:1, max:2},
+  {id:'sakana',  kana:'さ', name:'Fish & seafood',        hint:'1–2 kinds',                       min:1, max:2},
+  {id:'niku',    kana:'',  name:'Meat',                  hint:'1–2 kinds · outside the seven',   min:1, max:2},
+  {id:'tamago',  kana:'',  name:'Eggs',                  hint:'outside the seven',               min:1, max:1},
+  {id:'shiitake',kana:'し', name:'Mushrooms',             hint:'shimeji, enoki, shiitake',        min:2, max:3},
+  {id:'imo',     kana:'い', name:'Potatoes & tubers',     hint:'nagaimo, taro, potato',           min:1, max:2},
+  {id:'kaori',   kana:'や', name:'Aromatics',             hint:'ginger, garlic, shiso, spring onion', min:1, max:3},
+  {id:'tanshoku',kana:'や', name:'Light-coloured veg',    hint:'onion, cabbage, daikon, seasonal',min:6, max:8},
+  {id:'roshoku', kana:'や', name:'Dark-coloured veg',     hint:'carrot, spinach, seasonal greens',min:3, max:6},
+  {id:'kudamono',kana:'',  name:'Fruit',                 hint:'1–3 kinds · outside the seven',   min:1, max:3},
+];
+const STAPLES = [
+  {id:'goma',   kana:'ご', name:'Sesame, nuts & seeds'},
+  {id:'nori',   kana:'わ', name:'Nori'},
+  {id:'wakame', kana:'わ', name:'Wakame'},
+  {id:'kombu',  kana:'わ', name:'Kombu'},
+  {id:'rice',   kana:'',  name:'Rice'},
+  {id:'miso',   kana:'',  name:'Miso'},
+  {id:'dashi',  kana:'',  name:'Dashi'},
+  {id:'shoyu',  kana:'',  name:'Soy sauce, mirin, sake'},
+];
+const CYCLE = {need:'home', home:'got', got:'need'};
+const LABEL = {need:'Need', home:'Home', got:'Got it'};
+
+/* ─────────── storage ─────────── */
+const KEY = 'ichiju-issai-week';
+const store = {
+  async get(){
+    if (window.storage){ try{ const r = await window.storage.get(KEY); return r ? r.value : null; }catch(e){ return null; } }
+    try{ return localStorage.getItem(KEY); }catch(e){ return null; }
+  },
+  async set(v){
+    if (window.storage){ try{ await window.storage.set(KEY, v); return; }catch(e){ return; } }
+    try{ localStorage.setItem(KEY, v); }catch(e){}
+  }
+};
+
+let state = { started:null, mode:'plan', items:{}, staples:{} };
+FRAMEWORK.forEach(c => state.items[c.id] = []);
+STAPLES.forEach(s => state.staples[s.id] = false);
+
+const save = () => store.set(JSON.stringify(state));
+const uid  = () => Math.random().toString(36).slice(2,9);
+const esc  = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtWeek = iso => new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+
+/* ─────────── render ─────────── */
+const view = document.getElementById('view');
+
+function bandFor(cat){
+  const list = state.items[cat.id];
+  const secured = list.filter(i => i.status !== 'need').length;
+  const total = list.length;
+  const slots = Math.max(cat.max, total);
+  let html = '';
+  for (let i = 0; i < slots; i++){
+    let cls;
+    if (i >= cat.max)      cls = 'over';
+    else if (i < secured)  cls = 'secured';
+    else if (i < total)    cls = 'planned';
+    else if (i < cat.min)  cls = 'needed';
+    else                   cls = 'spare';
+    html += `<span class="tick ${cls}"></span>`;
+  }
+  return `<div class="band" aria-label="${total} of ${cat.min}–${cat.max} kinds">${html}</div>`;
+}
+
+function renderPlan(){
+  view.innerHTML = FRAMEWORK.map(cat => `
+    <section class="cat">
+      <div class="cat-head">
+        <div class="glyph ${cat.kana ? '' : 'extra'}">${cat.kana || '·'}</div>
+        <div class="cat-title"><h2>${cat.name}</h2><p>${cat.min}–${cat.max} kinds · ${cat.hint}</p></div>
+        ${bandFor(cat)}
+      </div>
+      <ul class="items">
+        ${state.items[cat.id].map(it => `
+          <li class="item ${it.status === 'got' ? 'done' : ''}">
+            <button class="state ${it.status}" data-cycle="${cat.id}:${it.id}">${LABEL[it.status]}</button>
+            <span class="name">${esc(it.name)}</span>
+            <button class="kill" data-kill="${cat.id}:${it.id}" aria-label="Remove ${esc(it.name)}">&times;</button>
+          </li>`).join('')}
+      </ul>
+      <div class="addrow">
+        <input type="text" data-input="${cat.id}" placeholder="Add a kind…" autocapitalize="none" autocomplete="off">
+        <button data-add="${cat.id}">Add</button>
+      </div>
+    </section>`).join('')
+  + `<section class="staples">
+      <div class="staples-head"><h2>Staples</h2><p>Check these last · ご and わ live here</p></div>
+      ${STAPLES.map(s => `
+        <button class="staple ${state.staples[s.id] ? 'on' : ''}" data-staple="${s.id}">
+          <span class="box">&#10003;</span>
+          ${s.kana ? `<span class="tag">${s.kana}</span>` : ''}
+          <span class="name">${s.name}</span>
+        </button>`).join('')}
+     </section>
+     <p class="legend">
+       <span class="k tick secured"></span>secured &nbsp;
+       <span class="k tick planned"></span>still to buy &nbsp;
+       <span class="k tick needed"></span>below minimum &nbsp;
+       <span class="k tick spare"></span>room left
+     </p>`;
+}
+
+function renderShop(){
+  const groups = FRAMEWORK
+    .map(cat => ({cat, list: state.items[cat.id].filter(i => i.status !== 'home')}))
+    .filter(g => g.list.length);
+  const staplesLeft = STAPLES.filter(s => !state.staples[s.id]);
+
+  if (!groups.length && !staplesLeft.length){
+    view.innerHTML = `<div class="empty"><p>Nothing left to buy.</p><small>Add kinds in Plan, or start a new week.</small></div>`;
+    return;
+  }
+  view.innerHTML = groups.map(g => `
+    <div class="shop-group">
+      <h3>${g.cat.name}</h3>
+      ${g.list.map(it => `
+        <button class="shopitem ${it.status === 'got' ? 'on' : ''}" data-cycle-shop="${g.cat.id}:${it.id}">
+          <span class="box" style="${it.status === 'got' ? 'background:var(--ink);border-color:var(--ink);color:var(--paper)' : ''}">&#10003;</span>
+          <span class="name">${esc(it.name)}</span>
+        </button>`).join('')}
+    </div>`).join('')
+  + `<div class="shop-group">
+      <h3>Staples — check last</h3>
+      ${STAPLES.map(s => `
+        <button class="shopitem ${state.staples[s.id] ? 'on' : ''}" data-staple="${s.id}">
+          <span class="box" style="${state.staples[s.id] ? 'background:var(--ink);border-color:var(--ink);color:var(--paper)' : ''}">&#10003;</span>
+          <span class="name">${s.name}</span>
+        </button>`).join('')}
+     </div>`;
+}
+
+function renderChrome(){
+  document.getElementById('weekstamp').textContent = state.started ? fmtWeek(state.started) : '—';
+  document.getElementById('tab-plan').setAttribute('aria-selected', state.mode === 'plan');
+  document.getElementById('tab-shop').setAttribute('aria-selected', state.mode === 'shop');
+
+  const toBuy = FRAMEWORK.reduce((n,c) => n + state.items[c.id].filter(i => i.status === 'need').length, 0);
+  document.getElementById('shopcount').textContent = toBuy ? `(${toBuy})` : '';
+
+  const short = FRAMEWORK.filter(c => state.items[c.id].length < c.min).length;
+  document.getElementById('tally').innerHTML = short
+    ? `<b>${short}</b> ${short === 1 ? 'category' : 'categories'} below minimum`
+    : `<b>All</b> categories at minimum`;
+}
+
+function render(){ state.mode === 'plan' ? renderPlan() : renderShop(); renderChrome(); }
+
+/* ─────────── actions ─────────── */
+function addItem(catId, input){
+  const name = input.value.trim();
+  if (!name) return;
+  state.items[catId].push({id:uid(), name, status:'need'});
+  if (!state.started) state.started = new Date().toISOString();
+  input.value = '';
+  save(); render();
+  const next = document.querySelector(`[data-input="${catId}"]`);
+  if (next) next.focus();
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-cycle],[data-cycle-shop],[data-kill],[data-add],[data-staple]');
+  if (!t) return;
+
+  if (t.dataset.add){
+    addItem(t.dataset.add, document.querySelector(`[data-input="${t.dataset.add}"]`));
+  } else if (t.dataset.cycle || t.dataset.cycleShop){
+    const [catId, itemId] = (t.dataset.cycle || t.dataset.cycleShop).split(':');
+    const it = state.items[catId].find(i => i.id === itemId);
+    if (!it) return;
+    it.status = t.dataset.cycleShop ? (it.status === 'got' ? 'need' : 'got') : CYCLE[it.status];
+    save(); render();
+  } else if (t.dataset.kill){
+    const [catId, itemId] = t.dataset.kill.split(':');
+    state.items[catId] = state.items[catId].filter(i => i.id !== itemId);
+    save(); render();
+  } else if (t.dataset.staple){
+    state.staples[t.dataset.staple] = !state.staples[t.dataset.staple];
+    save(); render();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.dataset && e.target.dataset.input){
+    e.preventDefault();
+    addItem(e.target.dataset.input, e.target);
+  }
+});
+
+document.getElementById('tab-plan').onclick = () => { state.mode = 'plan'; save(); render(); };
+document.getElementById('tab-shop').onclick = () => { state.mode = 'shop'; save(); render(); };
+document.getElementById('reset').onclick = () => {
+  if (!confirm('Clear every kind and uncheck the staples? The framework stays.')) return;
+  FRAMEWORK.forEach(c => state.items[c.id] = []);
+  STAPLES.forEach(s => state.staples[s.id] = false);
+  state.started = new Date().toISOString();
+  state.mode = 'plan';
+  save(); render();
+};
+
+/* ─────────── boot ─────────── */
+(async () => {
+  const raw = await store.get();
+  if (raw){
+    try{
+      const saved = JSON.parse(raw);
+      state.started = saved.started || null;
+      state.mode = saved.mode || 'plan';
+      FRAMEWORK.forEach(c => state.items[c.id] = Array.isArray(saved.items?.[c.id]) ? saved.items[c.id] : []);
+      STAPLES.forEach(s => state.staples[s.id] = !!saved.staples?.[s.id]);
+    }catch(e){}
+  }
+  if (!state.started) state.started = new Date().toISOString();
+  render();
+})();
+</script>
+</body>
+</html>
