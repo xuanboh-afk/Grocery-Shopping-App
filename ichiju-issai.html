@@ -162,6 +162,35 @@ main{padding:18px 14px 0;max-width:600px;margin:0 auto}
 .legend{padding:2px 4px 26px;font-size:11px;color:var(--ink-faint);line-height:1.7}
 .legend .k{display:inline-block;width:9px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px}
 
+/* ── reference panel ── */
+.ref{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.ref>summary{
+  padding:15px 14px;font-family:var(--mincho);font-size:16px;font-weight:600;
+  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;
+}
+.ref>summary::-webkit-details-marker{display:none}
+.ref>summary::after{content:"＋";font-size:15px;color:var(--ink-faint);font-family:var(--gothic)}
+.ref[open]>summary::after{content:"−"}
+.ref>summary small{font-family:var(--gothic);font-weight:400;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint)}
+.ref-body{padding:0 14px 16px;border-top:1px solid var(--rule)}
+.principle{padding:15px 0;border-bottom:1px solid var(--rule)}
+.principle:last-child{border-bottom:none;padding-bottom:2px}
+.principle h3{margin:0;font-family:var(--mincho);font-size:16px;font-weight:600;display:flex;align-items:baseline;gap:8px}
+.principle h3 em{font-style:normal;font-family:var(--gothic);font-size:11px;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint)}
+.principle>p{margin:6px 0 0;font-size:13.5px;color:var(--ink-soft);line-height:1.55}
+.principle ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.principle li{display:flex;gap:10px;align-items:baseline;font-size:14px}
+.principle li b{flex:0 0 76px;font-family:var(--mincho);font-weight:600;font-size:14.5px}
+.principle li span{flex:1;color:var(--ink-soft);font-size:13.5px}
+.swatch{flex:0 0 13px;height:13px;border-radius:4px;border:1px solid rgba(23,35,59,.18);align-self:center}
+.shun-now{background:var(--celadon-wash);border-radius:10px;padding:11px 12px;margin-top:10px}
+.shun-now b{display:block;font-family:var(--gothic);font-size:10.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--celadon);margin-bottom:4px}
+.shun-now span{font-size:13.5px;color:var(--ink);line-height:1.5}
+.caveat{margin:14px 0 0;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -210,6 +239,45 @@ const STAPLES = [
   {id:'dashi',  kana:'',  name:'Dashi'},
   {id:'shoyu',  kana:'',  name:'Soy sauce, mirin, sake'},
 ];
+/* ─────────── reference: 五味五色五法 + 旬 ─────────── */
+const GOSHIKI = [
+  ['白','white','#F2F2EE','rice, tofu, daikon, onion, lotus root'],
+  ['黒','black','#1E1E1E','nori, hijiki, kikurage, black sesame, gobo'],
+  ['赤','red','#B4453A','carrot, tomato, salmon, red pepper, ume'],
+  ['黄','yellow','#D8A62A','egg, kabocha, sweetcorn, miso, yuzu'],
+  ['青','green','#6F9481','spinach, cucumber, edamame, shiso, spring onion'],
+];
+const GOMI = [
+  ['甘','sweet','mirin, kabocha, onion cooked slowly'],
+  ['酸','sour','rice vinegar, ume, citrus, pickles'],
+  ['塩','salty','salt, soy sauce, miso'],
+  ['苦','bitter','gobo, bitter greens, grilled skin, green tea'],
+  ['旨','umami','dashi, kombu, dried shiitake, fermented things'],
+];
+const GOHO = [
+  ['生','raw','sashimi, salads, grated daikon, pickled'],
+  ['煮','simmered','nimono, soups, braises'],
+  ['焼','grilled','yakimono, pan-seared, broiled'],
+  ['蒸','steamed','chawanmushi, steamed fish, vegetables'],
+  ['揚','fried','tempura, agedashi, karaage'],
+];
+const SHUN = [
+  'leeks, kale, cabbage, celeriac, swede, parsnip, forced rhubarb',
+  'purple sprouting broccoli, forced rhubarb, leeks, kale, cauliflower',
+  'purple sprouting broccoli, spring greens, leeks, radishes, rhubarb',
+  'asparagus, spring onions, watercress, radishes, spring greens',
+  'asparagus, new potatoes, spinach, watercress, rocket, radishes',
+  'broad beans, peas, courgettes, new potatoes, lettuce, strawberries',
+  'courgettes, French beans, tomatoes, cucumber, chard, cherries',
+  'tomatoes, sweetcorn, runner beans, aubergine, peppers, chard, plums',
+  'sweetcorn, beetroot, marrow, kale, wild mushrooms, pears, blackberries',
+  'squash, pumpkin, wild mushrooms, beetroot, leeks, apples, pears',
+  'squash, leeks, kale, Brussels sprouts, celeriac, parsnips, chestnuts',
+  'Brussels sprouts, kale, leeks, parsnips, red cabbage, celeriac',
+];
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
 const CYCLE = {need:'home', home:'got', got:'need'};
 const LABEL = {need:'Need', home:'Home', got:'Got it'};
 
@@ -291,7 +359,45 @@ function renderPlan(){
        <span class="k tick planned"></span>still to buy &nbsp;
        <span class="k tick needed"></span>below minimum &nbsp;
        <span class="k tick spare"></span>room left
-     </p>`;
+     </p>`
+  + renderReference();
+}
+
+function renderReference(){
+  const m = new Date().getMonth();
+  const row = (a, b, c, sw) => `<li>${sw ? `<span class="swatch" style="background:${sw}"></span>` : ''}<b>${a} ${b}</b><span>${c}</span></li>`;
+  return `
+  <details class="ref">
+    <summary>五味五色五法 <small>principles</small></summary>
+    <div class="ref-body">
+
+      <div class="principle">
+        <h3>旬 <em>shun · seasonality</em></h3>
+        <p>Buy what the ground is giving. Cheaper, better, and it fills the “seasonal” slots for you.</p>
+        <div class="shun-now"><b>${MONTHS[m]} in the UK</b><span>${SHUN[m]}</span></div>
+      </div>
+
+      <div class="principle">
+        <h3>五色 <em>goshiki · five colours</em></h3>
+        <p>A plate should carry all five. Black is the one that goes missing — it lives almost entirely in seaweed, sesame and dried fungus.</p>
+        <ul>${GOSHIKI.map(([k,n,c,ex]) => row(k, n, ex, c)).join('')}</ul>
+      </div>
+
+      <div class="principle">
+        <h3>五味 <em>gomi · five tastes</em></h3>
+        <p>Bitter is the usual gap in home cooking, and the easiest to add — char, a green, or the outer leaves.</p>
+        <ul>${GOMI.map(([k,n,ex]) => row(k, n, ex)).join('')}</ul>
+      </div>
+
+      <div class="principle">
+        <h3>五法 <em>gohō · five methods</em></h3>
+        <p>A check on the cook, not the shop. Good ingredients still fail if everything ends up in the same pan.</p>
+        <ul>${GOHO.map(([k,n,ex]) => row(k, n, ex)).join('')}</ul>
+      </div>
+
+      <p class="caveat">五味五色五法 comes from shōjin ryōri and carries into kaiseki. In the older Buddhist formulation the fifth taste is 辛 (pungent), not 旨 — umami only entered the set after Ikeda identified it in 1908. 一汁一菜 as a deliberate minimum is Doi Yoshiharu's argument, a modern paring-back of 一汁三菜. まごわやさしい is a 1980s nutrition mnemonic. Scaffolds, not doctrine.</p>
+    </div>
+  </details>`;
 }
 
 function renderShop(){
